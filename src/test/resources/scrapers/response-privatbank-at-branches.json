@@ -1,0 +1,20 @@
+[
+  {
+    "ccy": "USD",
+    "base_ccy": "UAH",
+    "buy": "1.01",
+    "sale": "2.02"
+  },
+  {
+    "ccy": "EUR",
+    "base_ccy": "UAH",
+    "buy": "3.03",
+    "sale": "4.04"
+  },
+  {
+    "ccy": "GBP",
+    "base_ccy": "UAH",
+    "buy": "5.05",
+    "sale": "6.06"
+  }
+]
