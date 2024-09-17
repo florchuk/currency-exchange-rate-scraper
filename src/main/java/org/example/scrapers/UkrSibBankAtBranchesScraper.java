@@ -11,6 +11,7 @@ import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class UkrSibBankAtBranchesScraper extends Scraper {
@@ -41,7 +42,7 @@ public class UkrSibBankAtBranchesScraper extends Scraper {
     @Override
     protected Object[] getItems(Object root) throws Exception {
         if (root instanceof Document) {
-            return ((Document) root).selectXpath("//ul[@class=\"exchange__wrap\"]/li").toArray();
+            return ((Document) root).selectXpath("//div[@id=\"kassa\"]/ul/li[@class=\"module-exchange__item\"]").toArray();
         }
 
         throw new IllegalArgumentException(
@@ -59,7 +60,7 @@ public class UkrSibBankAtBranchesScraper extends Scraper {
 
     @Override
     protected String getUnitCurrencyCode(Object item) throws Exception {
-        return ((Element) item).selectXpath("div[1]/div").text().trim();
+        return Objects.requireNonNull(((Element) item).selectXpath("div[@class=\"module-exchange__item-currency\"]/div[@class=\"module-exchange__item-text\"]").first()).ownText().trim();
     }
 
     @Override
@@ -69,12 +70,12 @@ public class UkrSibBankAtBranchesScraper extends Scraper {
 
     @Override
     protected Double getBuyRate(Object item) throws Exception {
-        return Double.valueOf(((Element) item).selectXpath("div[2]/div").text().trim());
+        return Double.valueOf(((Element) item).selectXpath("div[@class=\"module-exchange__item-value\"][2]/div[@class=\"module-exchange__item-text\"]/span").text().trim());
     }
 
     @Override
     protected Double getSaleRate(Object item) throws Exception {
-        return Double.valueOf(((Element) item).selectXpath("div[3]/div").text().trim());
+        return Double.valueOf(((Element) item).selectXpath("div[@class=\"module-exchange__item-value\"][4]/div[@class=\"module-exchange__item-text\"]/span").text().trim());
     }
 
     @Override
@@ -85,7 +86,9 @@ public class UkrSibBankAtBranchesScraper extends Scraper {
             @Override
             public boolean test(CurrencyExchangeRateDTO currencyExchangeRateDTO) {
                 return this.allowedCurrencyCodes.contains(currencyExchangeRateDTO.getUnitCurrencyCode())
-                        && this.allowedCurrencyCodes.contains(currencyExchangeRateDTO.getRateCurrencyCode());
+                        && this.allowedCurrencyCodes.contains(currencyExchangeRateDTO.getRateCurrencyCode())
+                        && !currencyExchangeRateDTO.getBuyRate().equals(0.0)
+                        && !currencyExchangeRateDTO.getSaleRate().equals(0.0);
             }
         };
     }

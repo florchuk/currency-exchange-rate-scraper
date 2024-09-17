@@ -85,7 +85,9 @@ public class PrivatBankAtBranchesScraper extends Scraper {
             @Override
             public boolean test(CurrencyExchangeRateDTO currencyExchangeRateDTO) {
                 return this.allowedCurrencyCodes.contains(currencyExchangeRateDTO.getUnitCurrencyCode())
-                        && this.allowedCurrencyCodes.contains(currencyExchangeRateDTO.getRateCurrencyCode());
+                        && this.allowedCurrencyCodes.contains(currencyExchangeRateDTO.getRateCurrencyCode())
+                        && !currencyExchangeRateDTO.getBuyRate().equals(0.0)
+                        && !currencyExchangeRateDTO.getSaleRate().equals(0.0);
             }
         };
     }
